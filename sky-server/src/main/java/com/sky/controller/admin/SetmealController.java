@@ -34,7 +34,7 @@ public class SetmealController {
         log.info("新增套餐：{}",setmealDTO);
 
         //查询当前菜品
-        dishService.getByIdWithFlavor();
+        dishService.list();
         setmealService.saveWithDish(setmealDTO);
         return Result.success();
     }

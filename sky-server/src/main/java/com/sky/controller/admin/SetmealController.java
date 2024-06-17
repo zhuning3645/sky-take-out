@@ -62,19 +62,21 @@ public class SetmealController {
 
     /**
      * 批量删除套餐
+     *
      * @param ids
      * @return
      */
     @DeleteMapping
     @ApiOperation("套餐批量删除")
     public Result delete(@RequestParam List<Long> ids) {
-        log.info("批量删除套餐：{}",ids);
+        log.info("批量删除套餐：{}", ids);
         setmealService.deleteBatch(ids);
         return Result.success();
     }
 
     /**
      * 根据id查询套餐，用于修改页面回显数据
+     *
      * @param id
      * @return
      */
@@ -87,6 +89,7 @@ public class SetmealController {
 
     /**
      * 修改套餐
+     *
      * @param setmealDTO
      * @return
      */
@@ -94,6 +97,19 @@ public class SetmealController {
     @ApiOperation("修改套餐")
     public Result update(@RequestBody SetmealDTO setmealDTO) {
         setmealService.update(setmealDTO);
+        return Result.success();
+    }
+
+    /**
+     * 套餐起售停售
+     * @param status
+     * @param Id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("套餐起售停售")
+    public Result startOrStop(@PathVariable Integer status, Long Id) {
+        setmealService.startOrStop(status, Id);
         return Result.success();
     }
 }

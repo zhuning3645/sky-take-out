@@ -28,13 +28,18 @@ public class SetmealController {
     @Autowired
     private DishService dishService;
 
+    /**
+     * 新增套餐
+     * @param setmealDTO
+     * @return
+     */
     @PostMapping
     @ApiOperation("新增套餐")
     public Result save(@RequestBody SetmealDTO setmealDTO) {
         log.info("新增套餐：{}",setmealDTO);
 
         //查询当前菜品
-        dishService.list();
+        //dishService.list();
         setmealService.saveWithDish(setmealDTO);
         return Result.success();
     }

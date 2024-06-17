@@ -4,8 +4,9 @@
 <mapper namespace="com.sky.mapper.SetmealMapper">
 
     <!--    插入套餐-->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
-        insert into setmeal(category_id, name, price, status, description, image, create_time, update_time, create_user,
+    <insert id="insert" parameterType="Setmeal" useGeneratedKeys="true" keyProperty="id" >
+        insert into setmeal
+        (category_id, name, price, status, description, image, create_time, update_time, create_user,
                             update_user)
         values (#{categoryId}, #{name}, #{price}, #{status}, #{description}, #{image}, #{createTime}, #{updateTime},
                 #{createUser},#{updateUser})

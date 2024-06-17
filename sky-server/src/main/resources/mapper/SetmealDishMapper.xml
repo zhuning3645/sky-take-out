@@ -12,11 +12,12 @@
     </select>
 
     <!--根据套餐id来插入菜品-->
-    <insert id="insertWithsetmealDish">
-        insert into setmeal_dish(setmeal_id, dish_id, name, price, copies)
+    <insert id="insertBatch">
+        insert into setmeal_dish
+            (setmeal_id, dish_id, name, price, copies)
         VALUES
-            <foreach item="item" index="index" collection="dishList" separator=",">
-        (#{setmealId}, #{item.dishId}, #{item.name}, #{item.price}, #{item.copies})
+            <foreach collection="setmealDishes" item="sd"  separator=",">
+        (#{sd.setmealId}, #{sd.dishId}, #{sd.name}, #{sd.price}, #{sd.copies})
             </foreach>
     </insert>
 

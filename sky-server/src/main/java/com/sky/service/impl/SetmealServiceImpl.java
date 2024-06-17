@@ -70,4 +70,15 @@ public class SetmealServiceImpl implements SetmealService {
 
         return new PageResult(page.getTotal(), page.getResult());
     }
+
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    public void deleteBatch(List<Long> ids) {
+        //删除套餐表中套餐
+        setmealMapper.deleteByIds(ids);
+        //删除套餐菜品对应表中的数据
+        setmealDishMapper.deleteByIds(ids);
+    }
 }

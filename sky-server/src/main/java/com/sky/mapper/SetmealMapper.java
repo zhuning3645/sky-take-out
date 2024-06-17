@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface SetmealMapper {
 
@@ -30,9 +32,15 @@ public interface SetmealMapper {
     void insert(Setmeal setmeal);
 
     /**
-     * 菜品分页查询
+     * 套餐分页查询
      * @param setmealPageQueryDTO
      * @return
      */
     Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }

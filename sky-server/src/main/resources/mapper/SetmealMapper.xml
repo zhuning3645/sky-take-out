@@ -12,6 +12,16 @@
                 #{createUser},#{updateUser})
     </insert>
 
+    <!--    删除菜品-->
+    <delete id="deleteByIds">
+        delete from
+        setmeal
+        where id in
+          <foreach collection="ids" open="(" close=")" separator="," item="id">
+              #{id}
+          </foreach>
+    </delete>
+
     <!--    分页查询-->
     <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
         select

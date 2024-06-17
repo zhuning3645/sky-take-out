@@ -14,7 +14,13 @@
 
     <!--    分页查询-->
     <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
-        select d.* ,c.name as categoryName from setmeal d left outer join category c on d.category_id = c.id
+        select
+        d.*,c.name as categoryName
+        from setmeal d
+        left outer join
+        category c
+        on
+        d.category_id = c.id
         <where>
             <if test="name != null">
                 and d.name = like concat('%', #{name}, '%')
@@ -23,10 +29,10 @@
                 and d.category_id = #{categoryId}
             </if>
             <if test="name != null">
-                and d.status =  #{status}
+                and d.status = #{status}
             </if>
         </where>
-    order by d.create_time desc
+        order by d.create_time desc
     </select>
 
 
@@ -37,23 +43,6 @@
 <!--            #{id}-->
 <!--        </foreach>-->
 <!--    </delete>-->
-
-    <!--    分页查询-->
-<!--    <select id="pageQuery" resultType="com.sky.vo.DishVO">-->
-<!--        select d.* ,c.name as categoryName from dish d left outer join category c on d.category_id = c.id-->
-<!--        <where>-->
-<!--            <if test="name != null">-->
-<!--                and d.name = like concat('%', #{name},'%')-->
-<!--            </if>-->
-<!--            <if test="categoryId != null">-->
-<!--                and d.category_id = #{categoryId}-->
-<!--            </if>-->
-<!--            <if test="status != null">-->
-<!--                and d.status = #{status}-->
-<!--            </if>-->
-<!--        </where>-->
-<!--    order by d.create_time desc-->
-<!--    </select>-->
 
     <!--    修改菜品
     <update id="update">

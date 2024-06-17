@@ -22,19 +22,20 @@ import org.springframework.web.bind.annotation.*;
 public class SetmealController {
 
     @Autowired
-    private  SetmealService setmealService;
+    private SetmealService setmealService;
     @Autowired
     private DishService dishService;
 
     /**
      * 新增套餐
+     *
      * @param setmealDTO
      * @return
      */
     @PostMapping
     @ApiOperation("新增套餐")
     public Result save(@RequestBody SetmealDTO setmealDTO) {
-        log.info("新增套餐：{}",setmealDTO);
+        log.info("新增套餐：{}", setmealDTO);
 
         //查询当前菜品
         //dishService.list();
@@ -44,15 +45,16 @@ public class SetmealController {
 
     /**
      * 套餐分页查询
+     *
      * @param setmealPageQueryDTO
      * @return
      */
     @GetMapping("/page")
     @ApiOperation("套餐分页查询")
-    public Result<PageResult> page(@RequestBody SetmealPageQueryDTO setmealPageQueryDTO) {
-    log.info("套餐分页查询{}",setmealPageQueryDTO);
-    PageResult pageResult = setmealService.pageQuery(setmealPageQueryDTO);
-    return Result.success(pageResult);
+    public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO) {
+        log.info("套餐分页查询{}", setmealPageQueryDTO);
+        PageResult pageResult = setmealService.pageQuery(setmealPageQueryDTO);
+        return Result.success(pageResult);
     }
 
 }

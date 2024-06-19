@@ -103,13 +103,14 @@ public class SetmealController {
     /**
      * 套餐起售停售
      * @param status
-     * @param Id
+     * @param id
      * @return
      */
     @PostMapping("/status/{status}")
     @ApiOperation("套餐起售停售")
-    public Result startOrStop(@PathVariable Integer status, Long Id) {
-        setmealService.startOrStop(status, Id);
+    public Result startOrStop(@PathVariable Integer status, Long id) {
+        log.info("接收到的参数 - ID: {}, 状态: {}", id, status);
+        setmealService.startOrStop(status, id);
         return Result.success();
     }
 }

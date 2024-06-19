@@ -150,7 +150,7 @@ public class SetmealServiceImpl implements SetmealService {
      * 套餐起售停售
      *
      * @param status
-     * @param id
+     * @param Id
      */
     public void startOrStop(Integer status, Long id) {
         //起售套餐时，判断套餐内是否有停售菜品，有停售菜品提示“套餐内包含未起售菜品，无法启售”
@@ -171,8 +171,10 @@ public class SetmealServiceImpl implements SetmealService {
                 .status(status)
                 .build();
 //todo:这个套餐状态的修改还没有跑通
-       setmealMapper.update(setmeal);
-       log.info("获得套餐当前状态：{}",setmeal.getStatus());
+        log.info("准备更新套餐状态，ID：{}，状态：{}", setmeal.getId(), setmeal.getStatus());
+        int rowsAffected = setmealMapper.update(setmeal);
+        log.info("更新套餐状态，影响行数：{}", rowsAffected);
+        log.info("获得套餐当前状态：{}", setmeal.getStatus());
     }
 
 }

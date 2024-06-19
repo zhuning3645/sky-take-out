@@ -11,4 +11,7 @@ sky:
     access-key-id: LTAI5tHZwBnjtka5cBoswDZZ
     access-key-secret: XswUM292cI3w95SEB4hIymIlxDLuG0
     bucket-name: sky-ouyang
-
+  redis:
+    host: localhost
+    port: 6379
+    database: 10

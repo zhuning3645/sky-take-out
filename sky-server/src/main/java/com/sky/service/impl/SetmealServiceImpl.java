@@ -150,7 +150,7 @@ public class SetmealServiceImpl implements SetmealService {
      * 套餐起售停售
      *
      * @param status
-     * @param Id
+     * @param id
      */
     public void startOrStop(Integer status, Long id) {
         //起售套餐时，判断套餐内是否有停售菜品，有停售菜品提示“套餐内包含未起售菜品，无法启售”

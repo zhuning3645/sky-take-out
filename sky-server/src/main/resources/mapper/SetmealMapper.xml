@@ -45,6 +45,22 @@
         order by d.create_time desc
     </select>
 
+    <!--根据分组查询菜品信息-->
+    <select id="list" parameterType="Setmeal" resultType="Setmeal">
+        select * from setmeal
+        <where>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
     <!--    修改套餐-->
     <update id="update">
         update setmeal
@@ -60,7 +76,6 @@
         </set>
         where id = #{id}
     </update>
-
 
     <!--    删除菜品-->
 <!--    <delete id="deleteByIds">-->

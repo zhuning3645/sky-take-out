@@ -171,10 +171,7 @@ public class SetmealServiceImpl implements SetmealService {
                 .id(id)
                 .status(status)
                 .build();
-//todo:这个套餐状态的修改还没有跑通
-        log.info("准备更新套餐状态，ID：{}，状态：{}", setmeal.getId(), setmeal.getStatus());
-        int rowsAffected = setmealMapper.update(setmeal);
-        log.info("更新套餐状态，影响行数：{}", rowsAffected);
+        setmealMapper.update(setmeal);
         log.info("获得套餐当前状态：{}", setmeal.getStatus());
     }
 

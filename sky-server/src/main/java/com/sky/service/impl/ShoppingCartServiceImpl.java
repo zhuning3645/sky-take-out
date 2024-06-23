@@ -48,7 +48,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             ShoppingCart cart = list.get(0);
             cart.setNumber(cart.getNumber() + 1);//update shopping_cart set number = ? where id = ?
             shoppingCartMapper.update(cart);
-        }else{
+        } else {
             //如果不存在，需要插入一条购物车数据
             //判断本次添加到购物车的是菜品还是套餐
             Long dishId = shoppingCartDTO.getDishId();
@@ -58,7 +58,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 shoppingCart.setName(dish.getName());
                 shoppingCart.setImage(dish.getImage());
                 shoppingCart.setAmount(dish.getPrice());
-            }else{
+            } else {
                 //本次添加到购物车的是套餐
                 Long setmealId = shoppingCartDTO.getSetmealId();
 
@@ -73,5 +73,19 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 
 
+    }
+
+    /**
+     * 查看购物车
+     *
+     * @return
+     */
+    public List<ShoppingCart> showShoppingCart() {
+        //获取当前微信用户的id
+        Long userId = BaseContext.getCurrentId();
+        ShoppingCart shoppingCart = ShoppingCart.builder()
+                .userId(userId)
+                .build();
+        return shoppingCartMapper.list(shoppingCart);
     }
 }

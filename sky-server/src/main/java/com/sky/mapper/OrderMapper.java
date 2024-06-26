@@ -20,19 +20,19 @@ public interface OrderMapper {
      * @param ordersPageQueryDTO
      * @return
      */
-    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+    //Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
      * 根据id查询订单
      * @param id
      * @return
      */
-    @Select("select * from orders where id=#{}")
+    @Select("select * from orders where id=#{id}")
     Orders getById(Long id);
 
     /**
      * 更新订单状态
      * @param orders
      */
-    void update(Orders orders);
+    //void update(Orders orders);
 }

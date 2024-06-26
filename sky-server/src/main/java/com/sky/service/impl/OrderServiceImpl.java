@@ -123,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
      * @param status
      * @return
      */
-    public PageResult pageQuery4User(int pageNum, int pageSize, Integer status) {
+    /*public PageResult pageQuery4User(int pageNum, int pageSize, Integer status) {
         //设置分页
         PageHelper.startPage(pageNum, pageSize);
 
@@ -151,14 +151,14 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return new PageResult(page.getTotal(), list);
-    }
+    }*/
 
     /**
      * 查询订单详情
      * @param id
      * @return
      */
-    public OrderVO details(Long id) {
+    /*public OrderVO details(Long id) {
         //根据id查询订单
         Orders orders = orderMapper.getById(id);
         //查询该订单对应的菜品/套餐明细
@@ -170,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setOrderDetailList(orderDetailList);
 
         return orderVO;
-    }
+    }*/
 
     /**
      * 取消订单
@@ -218,7 +218,7 @@ public class OrderServiceImpl implements OrderService {
      * 再来一单
      * @param id
      */
-    public void repetition(Long id) {
+    /**public void repetition(Long id) {
         //查询当前用户id
         Long userId = BaseContext.getCurrentId();
 
@@ -239,5 +239,5 @@ public class OrderServiceImpl implements OrderService {
         shoppingCartMapper.insertBatch(shoppingCartList);
     }
 
-
+*/
 }

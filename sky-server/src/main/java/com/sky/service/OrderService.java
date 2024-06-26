@@ -22,14 +22,14 @@ public interface OrderService {
      * @param status
      * @return
      */
-    PageResult pageQuery4User(int page, int pageSize, Integer status);
+//    PageResult pageQuery4User(int page, int pageSize, Integer status);
 
     /**
      * 查询订单详情
      * @param id
      * @return
      */
-    OrderVO details(Long id);
+//    OrderVO details(Long id);
 
     /**
      * 取消订单
@@ -42,5 +42,5 @@ public interface OrderService {
      * 再来一单
      * @param id
      */
-    void repetition(Long id);
+    /*void repetition(Long id);*/
 }

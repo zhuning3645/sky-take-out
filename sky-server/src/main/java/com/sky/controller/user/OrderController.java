@@ -44,32 +44,32 @@ public class OrderController {
      * @param status
      * @return
      */
-    /*@GetMapping("/historyOrders")
+    @GetMapping("/historyOrders")
     @ApiOperation("历史订单查询")
     public Result<PageResult>page(int page, int pageSize, Integer status){
         PageResult pageResult = orderService.pageQuery4User(page, pageSize,status);
         return Result.success(pageResult);
-    }*/
+    }
 
     /**
      * 查询订单详情
      * @param id
      * @return
      */
-    /*@GetMapping("/orderDetail/{id}")
+    @GetMapping("/orderDetail/{id}")
     @ApiOperation("订单详情查询")
     public Result<OrderVO>details(@PathVariable("id") Long id){
         log.info("查询订单号详情：{}",id);
         OrderVO orderVO = orderService.details(id);
         return Result.success(orderVO);
-    }*/
+    }
 
     /**
      * 取消订单
      * @param id
      * @return
      */
-   /* @PutMapping("/cancel/{id}")
+   @PutMapping("/cancel/{id}")
     @ApiOperation("取消订单")
     public Result cancel(@PathVariable Long id)throws Exception{
         orderService.userCancelById(id);
@@ -81,12 +81,12 @@ public class OrderController {
      * @param id
      * @return
      */
-   /* @PostMapping("/repetition/{id}")
+   @PostMapping("/repetition/{id}")
     @ApiOperation("再来一单")
     public Result repetition(@PathVariable Long id){
         log.info("再来一单订单号详情：{}",id);
         orderService.repetition(id);
         return Result.success();
-    }*/
+    }
 
 }

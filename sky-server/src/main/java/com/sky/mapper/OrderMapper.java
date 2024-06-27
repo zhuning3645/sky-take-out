@@ -20,7 +20,7 @@ public interface OrderMapper {
      * @param ordersPageQueryDTO
      * @return
      */
-    //Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
      * 根据id查询订单
@@ -34,5 +34,5 @@ public interface OrderMapper {
      * 更新订单状态
      * @param orders
      */
-    //void update(Orders orders);
+    void update(Orders orders);
 }

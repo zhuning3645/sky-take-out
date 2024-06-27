@@ -15,21 +15,8 @@
                 #{tablewareNumber}, #{tablewareStatus})
     </insert>
 
-    <!--<update id="update">
-        update orders
-        <set>
-            <if test="number != null">number = #{number},</if>
-            <if test="status != null">status = #{status},</if>
-            <if test="userId != null">user_id = #{userId},</if>
-            <if test="addressBookId != null">address_book_id = #{addressBookId},</if>
-            <if test="cancelReason != null">cancel_reason = #{cancelReason},</if>
-            <if test="cancelTime != null">cancel_time = #{cancelTime},</if>
-        </set>
-        where id = #{id}
-    </update>-->
-
     <!--    分页条件查询并按下单时间排序-->
-    <!--<select id="pageQuery" resultType="Orders">
+    <select id="pageQuery" resultType="Orders">
         select * from orders
         <where>
             <if test="number != null and number!=''">
@@ -52,6 +39,20 @@
             </if>
         </where>
         order by order_time desc
-    </select>-->
+    </select>
+
+    <!--    更新订单状态-->
+    <update id="update">
+        update orders
+        <set>
+            <if test="number != null">number = #{number},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="addressBookId != null">address_book_id = #{addressBookId},</if>
+            <if test="cancelReason != null">cancel_reason = #{cancelReason},</if>
+            <if test="cancelTime != null">cancel_time = #{cancelTime},</if>
+        </set>
+        where id = #{id}
+    </update>
 
 </mapper>

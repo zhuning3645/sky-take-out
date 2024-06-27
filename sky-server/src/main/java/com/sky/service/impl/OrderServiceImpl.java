@@ -4,9 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
@@ -23,6 +21,7 @@ import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -183,7 +183,6 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     public void userCancelById(Long id) throws Exception {
-        //根据id查询订单
         Orders ordersDB = orderMapper.getById(id);
 
         //校验订单是否存在
@@ -331,5 +330,41 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         orderMapper.update(orders);
     }
+
+    /**
+     * 拒单
+     *
+     * @param ordersRejectionDTO
+     */
+    public void rejection(OrdersRejectionDTO ordersRejectionDTO) throws Exception{
+        //查询订单
+        Orders ordersDB = orderMapper.getById(ordersRejectionDTO.getId());
+
+        //校验订单是否存在
+        if (ordersDB == null||ordersDB.getStatus() != Orders.TO_BE_CONFIRMED) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        //订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消 7退款
+        Integer payStatus = ordersDB.getStatus();
+
+        //  只有订单处于“待接单2”状态时可以执行拒单操作
+        if (payStatus == ordersDB.getPayStatus()) {
+            String refund = weChatPayUtil.refund(
+                    ordersDB.getNumber(),
+                    ordersDB.getNumber(),
+                    new BigDecimal("0.01"),
+                    new BigDecimal("0.01"));
+                log.info("申请退款：{}",refund);
+        }
+        Orders orders = new Orders();
+        //  商家拒单时需要指定拒单原因
+        orders.setId(ordersDB.getId());
+        orders.setStatus(Orders.CANCELLED);
+        orders.setCancelReason(ordersRejectionDTO.getRejectionReason());
+        orders.setCancelTime(LocalDateTime.now());
+
+        orderMapper.update(orders);
+    }
+
 
 }

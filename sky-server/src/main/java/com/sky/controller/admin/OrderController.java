@@ -74,11 +74,30 @@ public class OrderController {
         return Result.success();
     }
 
+    /**
+     * 拒单
+     * @param ordersRejectionDTO
+     * @return
+     * @throws Exception
+     */
     @PutMapping("/rejection")
     @ApiOperation("拒单")
-    public Result cancel(@RequestBody OrdersRejectionDTO ordersRejectionDTO) throws Exception{
+    public Result rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO) throws Exception{
         log.info("取消订单{}", ordersRejectionDTO.getId());
         orderService.rejection(ordersRejectionDTO);
+        return Result.success();
+    }
+
+    /**
+     * 取消订单
+     * @param ordersCancelDTO
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("/cancel")
+    @ApiOperation("取消订单")
+    public Result cancel(@RequestBody OrdersCancelDTO ordersCancelDTO) throws Exception{
+        orderService.cancel(ordersCancelDTO);
         return Result.success();
     }
 

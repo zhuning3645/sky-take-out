@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
@@ -134,16 +135,16 @@ public class OrderServiceImpl implements OrderService {
         ordersPageQueryDTO.setStatus(status);
 
         //分页条件查询
-        Page<Orders>page = orderMapper.pageQuery(ordersPageQueryDTO);
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
         List<Orders> list = new ArrayList<>();
 
         //查询订单明细，并封装进orderVO进行响应
-        if(page != null && page.getTotal() > 0){
-            for (Orders orders : page){
+        if (page != null && page.getTotal() > 0) {
+            for (Orders orders : page) {
                 Long orderId = orders.getId();//订单ID
 
                 //查询订单明细
-                List<OrderDetail>orderDetails = orderDetailMapper.getByOrderId(orderId);
+                List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(orderId);
 
                 OrderVO orderVO = new OrderVO();
                 BeanUtils.copyProperties(orders, orderVO);
@@ -157,6 +158,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 查询订单详情
+     *
      * @param id
      * @return
      */
@@ -164,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
         //根据id查询订单
         Orders orders = orderMapper.getById(id);
         //查询该订单对应的菜品/套餐明细
-        List<OrderDetail>orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
 
         //将该订单及其详情封装到OrderVO并返回
         OrderVO orderVO = new OrderVO();
@@ -176,6 +178,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 取消订单
+     *
      * @param id
      * @return
      */
@@ -184,7 +187,7 @@ public class OrderServiceImpl implements OrderService {
         Orders ordersDB = orderMapper.getById(id);
 
         //校验订单是否存在
-        if(ordersDB == null){
+        if (ordersDB == null) {
             throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
         }
         //订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消 7退款
@@ -195,11 +198,11 @@ public class OrderServiceImpl implements OrderService {
         if (status > 2) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
-            // 待支付和待接单状态下，用户可直接取消订单
+        // 待支付和待接单状态下，用户可直接取消订单
         Orders orders = new Orders();
         orders.setId(ordersDB.getId());
         //如果在待接单状态下取消订单，需要给用户退款
-        if(status.equals(Orders.TO_BE_CONFIRMED)){
+        if (status.equals(Orders.TO_BE_CONFIRMED)) {
             //调用微信支付退款接口
             weChatPayUtil.refund(
                     ordersDB.getNumber(),
@@ -218,6 +221,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 再来一单
+     *
      * @param id
      */
     public void repetition(Long id) {
@@ -225,10 +229,10 @@ public class OrderServiceImpl implements OrderService {
         Long userId = BaseContext.getCurrentId();
 
         //根据订单id查询当前订单详情
-        List<OrderDetail>orderDetailList = orderDetailMapper.getByOrderId(id);
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
 
         //将订单详情对象转换为购物车对象
-        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x->{
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x -> {
             ShoppingCart shoppingCart = new ShoppingCart();
 
             //将原订单详情里面的菜品信息重新复制到购物车对象中
@@ -236,13 +240,14 @@ public class OrderServiceImpl implements OrderService {
             shoppingCart.setUserId(userId);
             shoppingCart.setCreateTime(LocalDateTime.now());
             return shoppingCart;
-        } ).collect(Collectors.toList());
+        }).collect(Collectors.toList());
         //将购物车数据对象批量添加到数据库中
         shoppingCartMapper.insertBatch(shoppingCartList);
     }
 
     /**
      * 搜索订单
+     *
      * @param ordersPageQueryDTO
      * @return
      */
@@ -251,7 +256,7 @@ public class OrderServiceImpl implements OrderService {
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
         Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
         //部分订单状态，需要额外返回订单菜品信息，将Orders转化为OrderVO
-        List<OrderVO>orderVOList = getOrderVOList(page);
+        List<OrderVO> orderVOList = getOrderVOList(page);
         return new PageResult(page.getTotal(), orderVOList);
     }
 
@@ -261,7 +266,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderVO> orderVOList = new ArrayList<>();
 
         List<Orders> ordersList = page.getResult();
-        if(!CollectionUtils.isEmpty(ordersList)){
+        if (!CollectionUtils.isEmpty(ordersList)) {
             for (Orders orders : ordersList) {
                 //将共同字段复制到OrderVO中
                 OrderVO orderVO = new OrderVO();
@@ -278,6 +283,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 根据订单id获取菜品信息字符串
+     *
      * @param orders
      * @return
      */
@@ -286,7 +292,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
 
         //将每一条订单菜品信息拼接为字符串（格式：宫保鸡丁*3
-        List<String>orderDishList = orderDetailList.stream().map(X->{
+        List<String> orderDishList = orderDetailList.stream().map(X -> {
             String orderDish = X.getName() + "*" + X.getNumber() + ";";
             return orderDish;
         }).collect(Collectors.toList());
@@ -295,6 +301,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 各个状态订单数量统计
+     *
      * @return
      */
     public OrderStatisticsVO statistics() {
@@ -310,6 +317,19 @@ public class OrderServiceImpl implements OrderService {
         orderStatisticsVO.setDeliveryInProgress(deliveryInProgress);
 
         return orderStatisticsVO;
+    }
+
+    /**
+     * 接单
+     *
+     * @param ordersConfirmDTO
+     */
+    public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
+        Orders orders = Orders.builder()
+                .id(ordersConfirmDTO.getId())
+                .status(Orders.CONFIRMED)
+                .build();
+        orderMapper.update(orders);
     }
 
 }

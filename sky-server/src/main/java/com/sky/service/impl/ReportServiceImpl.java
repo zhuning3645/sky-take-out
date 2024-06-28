@@ -25,6 +25,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private OrderMapper orderMapper;
+
     /**
      * 统计指定时间区间内的营业额数据
      * @param begin
@@ -47,13 +48,15 @@ public class ReportServiceImpl implements ReportService {
             //查询date日期对应的营业额数据，营业额是指：状态为“已完成”的订单金额合计
             LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
             LocalDateTime endTime = LocalDateTime.of(date, LocalTime.MAX);
+            log.info("Date:{},BeginTime:{},EndTime:{}", date, beginTime, endTime);
 
             //select sum(amount) from orders where order_time > ? and status = 5
             Map map = new HashMap();
-            map.put("beginTime", beginTime);
-            map.put("endTime", endTime);
+            map.put("begin", beginTime);
+            map.put("end", endTime);
             map.put("status", Orders.COMPLETED);
-            Double turnover = orderMapper.sumByMap();
+            Double turnover = orderMapper.sumByMap(map);
+            turnover = turnover == null ? 0.0 : turnover;
             turnoverList.add(turnover);
         }
 

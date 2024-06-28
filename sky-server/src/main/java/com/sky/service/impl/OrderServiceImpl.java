@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
@@ -21,18 +22,18 @@ import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import springfox.documentation.spring.web.json.Json;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -49,6 +50,8 @@ public class OrderServiceImpl implements OrderService {
     private ShoppingCartMapper shoppingCartMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     /**
      * 用户下单
@@ -79,8 +82,9 @@ public class OrderServiceImpl implements OrderService {
         Orders orders = new Orders();
         BeanUtils.copyProperties(ordersSubmitDTO, orders);
         orders.setOrderTime(LocalDateTime.now());
-        orders.setPayStatus(Orders.UN_PAID);
-        orders.setStatus(Orders.PENDING_PAYMENT);
+        //跳过支付功能
+        orders.setPayStatus(Orders.PAID);
+        orders.setStatus(Orders.TO_BE_CONFIRMED);
         orders.setNumber(String.valueOf(System.currentTimeMillis()));
         orders.setPhone(addressBook.getPhone());
         orders.setConsignee(addressBook.getConsignee());
@@ -108,6 +112,15 @@ public class OrderServiceImpl implements OrderService {
 
         //4.清空当前用户的购物车数据
         shoppingCartMapper.deleteByUserId(userId);
+        //通过websocket向客户端浏览器推送消息type orderId content
+        Map map = new HashMap();
+        map.put("type",1);//1表示来单提醒 2表示客户催单
+        map.put("orderId",orders.getId());
+        map.put("content","订单号：" + orders.getNumber());
+
+        String json = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
+
         //封装VO返回结果
         OrderSubmitVO orderSubmitVO = OrderSubmitVO.builder()
                 .id(orders.getId())
@@ -117,6 +130,29 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         return orderSubmitVO;
+    }
+
+    /**
+     * 支付成功，修改订单状态
+     * @param outTradeNo
+     */
+    public void paySuccess(String outTradeNo){
+        //当前登录用户id
+        Long userId = BaseContext.getCurrentId();
+
+        //根据订单号查询当前用户的订单
+        Orders ordersDB = orderMapper.getByNumberAndUserId(outTradeNo, userId);
+
+        //根据订单id更新订单状态、支付方式、支付状态、结账时间
+        Orders orders = Orders.builder()
+                .id(ordersDB.getId())
+                .status(Orders.TO_BE_CONFIRMED)
+                .payStatus(Orders.PAID)
+                .checkoutTime(LocalDateTime.now())
+                .build();
+        orderMapper.update(orders);
+
+
     }
 
     /**
@@ -207,8 +243,8 @@ public class OrderServiceImpl implements OrderService {
             weChatPayUtil.refund(
                     ordersDB.getNumber(),
                     ordersDB.getNumber(),
-                    new BigDecimal(0.01),
-                    new BigDecimal(0.01));
+                    new BigDecimal("0.01"),
+                    new BigDecimal("0.01"));
             // 取消订单后需要将订单状态修改为“已取消”
             orders.setPayStatus(Orders.REFUND);
         }

@@ -470,5 +470,13 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
     }
 
+    /**
+     * 客户催单
+     * @param id
+     */
+    public void reminder(Long id) {
+
+    }
+
 
 }

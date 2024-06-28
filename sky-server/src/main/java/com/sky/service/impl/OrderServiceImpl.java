@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import springfox.documentation.spring.web.json.Json;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -118,8 +117,7 @@ public class OrderServiceImpl implements OrderService {
         map.put("orderId",orders.getId());
         map.put("content","订单号：" + orders.getNumber());
 
-        String json = JSON.toJSONString(map);
-        webSocketServer.sendToAllClient(json);
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
 
         //封装VO返回结果
         OrderSubmitVO orderSubmitVO = OrderSubmitVO.builder()
@@ -475,7 +473,20 @@ public class OrderServiceImpl implements OrderService {
      * @param id
      */
     public void reminder(Long id) {
+        //根据id查询订单
+        Orders ordersDB = orderMapper.getById(id);
 
+        //检验订单是否存在
+        if(ordersDB==null){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Map map = new HashMap();
+        map.put("type", 2);
+        map.put("orderId", id);
+        map.put("content","订单号：" + ordersDB.getNumber());
+        //通过websocket向客户端浏览器推送消息
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
 

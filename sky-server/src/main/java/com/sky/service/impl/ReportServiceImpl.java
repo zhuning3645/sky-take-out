@@ -149,12 +149,14 @@ public class ReportServiceImpl implements ReportService {
             //查询每天的有效订单数select count(id) from orders where order_time >? and order_time <? and status = 5
             Integer validOrderCount = getOrderCount(beginTime,endTime,Orders.COMPLETED);
             validOrderCountList.add(validOrderCount);
+            log.info("时间：{},订单数：{}",beginTime,validOrderCount);
 
         }
         //计算时间区间内的订单总数量
         Integer totalOrderCount = orderCountList.stream().reduce(Integer::sum).get();
         //计算时间区间内的有效订单总数量
-        Integer validOrderCount = orderCountList.stream().reduce(Integer::sum).get();
+        Integer validOrderCount = validOrderCountList.stream().reduce(Integer::sum).get();
+        log.info("有效订单数：{}", validOrderCount);
 
         Double orderCompletionRate = 0.0;
         if (totalOrderCount != 0) {
@@ -173,15 +175,15 @@ public class ReportServiceImpl implements ReportService {
 
     /**
      * 根据条件统计订单数量
-     * @param begin
-     * @param end
+     * @param beginTime
+     * @param endTime
      * @param status
      * @return
      */
-    private Integer getOrderCount(LocalDateTime begin, LocalDateTime end, Integer status) {
+    private Integer getOrderCount(LocalDateTime beginTime, LocalDateTime endTime, Integer status) {
         Map map = new HashMap();
-        map.put("begin", begin);
-        map.put("end", end);
+        map.put("begin", beginTime);
+        map.put("end", endTime);
         map.put("status", status);
 
         return orderMapper.countByMap(map);

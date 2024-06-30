@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.result.Result;
 import com.sky.service.ReportService;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.annotations.Api;
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 @Slf4j
 @Api(tags = "数据统计相关接口")
 @RequestMapping("/admin/report")
-public class reportController {
+public class ReportController {
 
     @Autowired
     private ReportService reportService;
@@ -40,6 +41,12 @@ public class reportController {
         return Result.success(turnoverReportVO);
     }
 
+    /**
+     * 用户数统计
+     * @param begin
+     * @param end
+     * @return
+     */
     @GetMapping("/userStatistics")
     @ApiOperation("用户统计")
     public Result<UserReportVO> userStatistics(
@@ -47,5 +54,20 @@ public class reportController {
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
         log.info("用户数据统计：{},{}", begin, end);
         return Result.success(reportService.getUserStatistics(begin, end));
+    }
+
+    /**
+     * 订单统计
+     * @param begin
+     * @param end
+     * @return
+     */
+    @GetMapping("/ordersStatistics")
+    @ApiOperation("订单统计")
+    public Result<OrderReportVO> ordersStatistics(
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+        log.info("订单数据统计：{},{}", begin, end);
+        return Result.success(reportService.getOrderStatistics(begin, end));
     }
 }
